@@ -10,6 +10,10 @@ function edges_to_bopit_action_e (button_edge: boolean, motor_edge: boolean, sha
     }
     return bopit_action_e.BOPIT_ACTION_NUM_ACTIONS
 }
+function bopit_update () {
+	
+}
+console.log("Disclaimer: figuring out what static typescript is oops")
 console.log("debounce.h")
 interface debounce_state {
     prev_sample: boolean,
@@ -256,5 +260,9 @@ function get_pending_audio_clip(gs: bopit_gamestate) {
     return gs.pending_audio;
 }
 forever(function () {
-	
+    control.runInParallel(function () {
+        bopit_update()
+    })
+    console.log("this wait should be longer than the update takes?")
+    control.waitMicros(4)
 })
