@@ -1,28 +1,30 @@
 function edges_to_bopit_action_e (button_edge: boolean, motor_edge: boolean, shaker_edge: boolean) {
     if (button_edge && !(motor_edge) && !(shaker_edge)) {
-        return bopit_action_e.BOPIT_ACTION_BOP
+        return "BOPIT_ACTION_BOP"
     }
     if (!(button_edge) && motor_edge && !(shaker_edge)) {
-        return bopit_action_e.BOPIT_ACTION_TWIST
+        return "BOPIT_ACTION_TWIST"
     }
     if (!(button_edge) && !(motor_edge) && shaker_edge) {
-        return bopit_action_e.BOPIT_ACTION_SHAKE
+        return "BOPIT_ACTION_SHAKE"
     }
-    return bopit_action_e.BOPIT_ACTION_NUM_ACTIONS
+    return "BOPIT_ACTION_NUM_ACTIONS"
 }
-function bopit_update () {
-	
+function time_now () {
+    return 0
 }
-console.log("Disclaimer: figuring out what static typescript is oops")
-console.log("debounce.h")
-interface debounce_state {
+input.onGesture(Gesture.ThreeG, function () {
+    console.log("This is just using typescript to be as close to the C version as possible")
+    console.log("Disclaimer: figuring out what static typescript is oops")
+    console.log("debounce.h")
+    interface debounce_state {
     prev_sample: boolean,
     last_edge_time: number,
     debounce_interval: number,
     button_out: boolean
 }
 console.log("debounce.c")
-function debounce_button(db: debounce_state, button: boolean, time_now: number) {
+    function debounce_button(db: debounce_state, button: boolean, time_now: number) {
     if ((button == true) && (db.prev_sample == false)) {
         db.last_edge_time = time_now;
     }
@@ -40,7 +42,7 @@ function debounce_button(db: debounce_state, button: boolean, time_now: number) 
     return db.button_out;
 }
 console.log("game.h")
-enum bopit_action_e {
+    enum bopit_action_e {
     BOPIT_ACTION_TWIST = 0,
     BOPIT_ACTION_SHAKE = 1,
     BOPIT_ACTION_BOP = 2,
@@ -91,53 +93,53 @@ interface bopit_gamestate {
     pending_audio: audio_clip //TODO
 }
 console.log("game.c")
-let SHAKER_BACKLASH = 600
-let it_clips = [0, 0, 0, 0]
-let twist_clips = [0, 0, 0, 0]
-let shake_clips = [0, 0, 0, 0]
-let bop_clips = [0, 0, 0, 0]
-let dry_kick_clip: audio_clip;
+    SHAKER_BACKLASH = 600
+    it_clips = [0, 0, 0, 0]
+    twist_clips = [0, 0, 0, 0]
+    shake_clips = [0, 0, 0, 0]
+    bop_clips = [0, 0, 0, 0]
+    let dry_kick_clip: audio_clip;
 let closed_hi_hat_clip: audio_clip;
-let action_to_cliptable_map = [twist_clips, shake_clips, bop_clips]
-let sound_schedule = [
-null,
-null,
-closed_hi_hat_clip,
-dry_kick_clip,
-dry_kick_clip,
-closed_hi_hat_clip
-]
-function advance_lfsr(gs: bopit_gamestate) { // should work? js converts 64bit fp Numbers to 32bit signed ints before bitwise ops - scary
-    let bit = gs.lfsr & 1;
+action_to_cliptable_map = [twist_clips, shake_clips, bop_clips]
+    sound_schedule = [
+    null,
+    null,
+    closed_hi_hat_clip,
+    dry_kick_clip,
+    dry_kick_clip,
+    closed_hi_hat_clip
+    ]
+    function advance_lfsr(gs: bopit_gamestate) { // should work? js converts 64bit fp Numbers to 32bit signed ints before bitwise ops - scary
+    let bit2 = gs.lfsr & 1;
     gs.lfsr >>= 1;
-    if(bit) {
+    if(bit2) {
         gs.lfsr ^= 0xA3000000;
     }
 }
-let note_length_multipliers = [
-1,
-1,
-2,
-1,
-1,
-2,
-65535
-]
-let speed_schedule = [
-[0, 250],
-[12, 227],
-[24, 208],
-[36, 187],
-[48, 174],
-[60, 163],
-[72, 156],
-[84, 150],
-[65535, 100]
-]
-let motor_hysteresis = [768, 512]
-let shaker_hysteresis = [2048, 512]
-console.log("this is not how this will be instantiated; will happen in a constructor called from main then passed to bopit_update_state from there")
-let bopit_gamestate_t = {
+note_length_multipliers = [
+    1,
+    1,
+    2,
+    1,
+    1,
+    2,
+    65535
+    ]
+    speed_schedule = [
+    [0, 250],
+    [12, 227],
+    [24, 208],
+    [36, 187],
+    [48, 174],
+    [60, 163],
+    [72, 156],
+    [84, 150],
+    [65535, 100]
+    ]
+    motor_hysteresis = [768, 512]
+    shaker_hysteresis = [2048, 512]
+    console.log("this is not how this will be instantiated; will happen in a constructor called from main then passed to bopit_update_state from there")
+    let bopit_gamestate_t = {
     t_now: 0,
     t_next_beat: 0,
     lost: 0,
@@ -232,7 +234,7 @@ function bopit_update_state(gs: bopit_gamestate, input: bopit_user_input, dt_ms:
     if (motor_trig || shaker_trig ||
         (gs.t_now > (gs.t_this_action + (gs.action_window / 2)))) {
         // check that the person did the right one
-        if ((edges_to_bopit_action_e(button_trig, motor_trig, shaker_trig) != gs.expected_action) ||
+        if ((true) ||
             (gs.t_now > (gs.t_this_action + (gs.action_window / 2))) ||
             (gs.t_now < (gs.t_this_action - (gs.action_window / 2)))) {
             gs.lost = true;
@@ -259,10 +261,128 @@ function bopit_update_state(gs: bopit_gamestate, input: bopit_user_input, dt_ms:
 function get_pending_audio_clip(gs: bopit_gamestate) {
     return gs.pending_audio;
 }
+})
+function advance_lfsr_new (num: number) {
+    bit = num % 2
+    num = num / 2
+    if (bit == 1) {
+        num = num ^ 0xA3000000;
+    }
+    return num
+}
+let sched_slot = 0
+let measure_number = 0
+let t_now = 0
+let num = 0
+let bit = 0
+let sound_schedule: number[] = []
+let ms_per_eighth_note = 0
+let shaker_hysteresis = 0
+let motor_hysteresis: number[] = []
+let speed_schedule: number[][] = []
+let note_length_multipliers: number[] = []
+let dry_kick_clip2 = 0
+let closed_hi_hat_clip2 = 0
+let action_to_cliptable_map: number[][] = []
+let bop_clips: number[] = []
+let shake_clips: number[] = []
+let twist_clips: number[] = []
+let it_clips: number[] = []
+let SHAKER_BACKLASH = 0
+let button_out = false
+let last_edge_time = 0
+let prev_sample = false
+let button = false
+console.log("This is just using the simplest native blocks possible.")
+console.log("debounce.h")
+let debounce_interval = 10
+console.log("debounce.c")
+console.log("Put this logic in the 'update state' portion, not in a function")
+if (button && !(prev_sample)) {
+    last_edge_time = time_now()
+}
+if (!(button) && prev_sample) {
+    last_edge_time = time_now()
+}
+prev_sample = button
+if (time_now() - last_edge_time > debounce_interval) {
+    button_out = button
+}
+console.log("game.h")
+let actions = ["twist", "shake", "bop", "none"]
+let bopit_action_e = ["BOPIT_ACTION_BOP", "BOPIT_ACTION_TWIST", "BOPIT_ACTION_SHAKE", "BOPIT_ACTION_NUM_ACTIONS"]
+let beats = [
+1,
+1.5,
+2,
+3,
+3.5,
+4,
+-1
+]
+button = false
+console.log("game.c")
+SHAKER_BACKLASH = 600
+it_clips = [0, 0, 0, 0]
+twist_clips = [0, 0, 0, 0]
+shake_clips = [0, 0, 0, 0]
+bop_clips = [0, 0, 0, 0]
+action_to_cliptable_map = [twist_clips, shake_clips, bop_clips]
+let sound_schedule2 = [
+null,
+null,
+closed_hi_hat_clip2,
+dry_kick_clip2,
+dry_kick_clip2,
+closed_hi_hat_clip2
+]
+note_length_multipliers = [
+1,
+1,
+2,
+1,
+1,
+2,
+65535
+]
+speed_schedule = [
+[0, 250],
+[12, 227],
+[24, 208],
+[36, 187],
+[48, 174],
+[60, 163],
+[72, 156],
+[84, 150],
+[65535, 100]
+]
+motor_hysteresis = [768, 512]
+shaker_hysteresis = [2048, 512]
+let t_measure_start = -4 * ms_per_eighth_note
+ms_per_eighth_note = speed_schedule[0][1]
+let t_this_action = 0 + 10 * ms_per_eighth_note
+let beat_state = 2
+let lfsr = 2781764410
+prev_sample = false
+last_edge_time = 0
+debounce_interval = 10
+button_out = false
 forever(function () {
-    control.runInParallel(function () {
-        bopit_update()
-    })
-    console.log("this wait should be longer than the update takes?")
-    control.waitMicros(4)
+    let t_next_beat = 0
+    t_now = time_now()
+    if (t_now >= t_next_beat) {
+        beat_state = beat_state + 1
+        if (beat_state >= 6) {
+            beat_state = 0
+            t_measure_start = t_next_beat
+        }
+        if (beat_state == 0) {
+            measure_number = measure_number + 1
+        }
+        sched_slot = 1
+        while (speed_schedule[sched_slot][0] < measure_number) {
+            sched_slot = sched_slot + 1
+        }
+        shaker_hysteresis = 0
+    }
 })
